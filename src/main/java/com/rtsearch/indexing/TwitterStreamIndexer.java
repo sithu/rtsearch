@@ -24,8 +24,10 @@ public class TwitterStreamIndexer {
 	 */
 	public static void main(String[] args) throws TwitterException, IOException {
 		System.out.println("Starting Twitter Streaming...");
-	    TwitterStream twitterStream = new TwitterStreamFactory(new TwitterStatusListener()).getInstance("rtsearcher", "msproject");
+		Indexer indexer = new TweetIndexer();
+	    TwitterStream twitterStream = new TwitterStreamFactory(new TwitterStatusListener(indexer)).getInstance("rtsearcher", "msproject");
 	    // sample() method internally creates a thread which manipulates TwitterStream and calls these adequate listener methods continuously.
 	    twitterStream.sample();
 	}
+	
 }

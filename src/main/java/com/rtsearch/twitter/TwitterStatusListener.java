@@ -3,6 +3,8 @@
  */
 package com.rtsearch.twitter;
 
+import com.rtsearch.indexing.Indexer;
+
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
@@ -12,6 +14,18 @@ import twitter4j.StatusListener;
  *
  */
 public class TwitterStatusListener implements StatusListener {
+	/**
+	 * 
+	 */
+	private Indexer indexer;
+	
+	/**
+	 * @param indexer
+	 */
+	public TwitterStatusListener(Indexer indexer) {
+		super();
+		this.indexer = indexer;
+	}
 
 	/* (non-Javadoc)
 	 * @see twitter4j.StatusListener#onDeletionNotice(twitter4j.StatusDeletionNotice)
@@ -39,6 +53,7 @@ public class TwitterStatusListener implements StatusListener {
 		System.out.println(status.getUser().getId() + " : " + 
 				(status.getUser().isGeoEnabled() ? status.getGeoLocation() : "NO_GEO") + " : " + status.getUser().getName() + " : " + status.getText());
 
+		this.indexer.createIndex(status.getText());
 	}
 
 	/* (non-Javadoc)
