@@ -36,7 +36,8 @@ public class TwitterStatusListener implements StatusListener {
 	 */
 	@Override
 	public void onStatus(Status status) {
-		System.out.println(status.getUser().getName() + " : " + status.getText());
+		System.out.println(status.getUser().getId() + " : " + 
+				(status.getUser().isGeoEnabled() ? status.getGeoLocation() : "NO_GEO") + " : " + status.getUser().getName() + " : " + status.getText());
 
 	}
 
