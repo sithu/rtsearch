@@ -9,4 +9,5 @@ package com.rtsearch.indexing;
  */
 public interface Indexer {
 	public void createIndex(String content);
+	public void closeIndex();
 }

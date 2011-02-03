@@ -16,13 +16,13 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 
+import com.rtsearch.util.LucenceUtil;
+
 /**
  * @author saung
  *
  */
 public class TweetIndexer implements Indexer {
-
-	public static final String INDEX_DIRECTORY = "indexDirectory";
 
 	public static final String FIELD_PATH = "path";
 	public static final String FIELD_CONTENTS = "contents";
@@ -31,16 +31,15 @@ public class TweetIndexer implements Indexer {
 	private final boolean recreateIndexIfExists;
 	private final IndexWriter indexWriter;
 	
-	public TweetIndexer() {
+	public TweetIndexer(String indexDirWithPath) {
 		this.analyzer = new StandardAnalyzer(Version.LUCENE_30);
 		this.recreateIndexIfExists = true;
-		this.indexWriter = getIndexWriter();
+		this.indexWriter = getIndexWriter(indexDirWithPath);
 	}
 	
-	private IndexWriter getIndexWriter() {
-		Directory dir = new RAMDirectory();
+	private IndexWriter getIndexWriter(String dirPath) {
 		try {
-			return new IndexWriter(dir, analyzer, recreateIndexIfExists, IndexWriter.MaxFieldLength.UNLIMITED);
+			return new IndexWriter(LucenceUtil.getIndexDir(dirPath), analyzer, recreateIndexIfExists, IndexWriter.MaxFieldLength.UNLIMITED);
 		} catch (CorruptIndexException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,4 +75,16 @@ public class TweetIndexer implements Indexer {
 		
 	}
 
+	public void closeIndex() {
+		try {
+			this.indexWriter.optimize();
+			this.indexWriter.close();
+		} catch (CorruptIndexException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
