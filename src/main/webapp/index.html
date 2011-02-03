@@ -2,11 +2,123 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>index.html</title>
+<title>RT Search</title>
+<script type='text/javascript'>
+    
+      if (!window.WebSocket)
+        alert("WebSocket not supported by this browser");
+    
+      function $() { return document.getElementById(arguments[0]); }
+      function $F() { return document.getElementById(arguments[0]).value; }
+      
+      function getKeyCode(ev) { if (window.event) return window.event.keyCode; return ev.keyCode; } 
+      
+      var room = {
+        join: function(name) {
+          this._username=name;
+          var location = document.location.toString().replace('http://','ws://').replace('https://','wss://');
+          this._ws=new WebSocket(location);
+          this._ws.onopen=this._onopen;
+          this._ws.onmessage=this._onmessage;
+          this._ws.onclose=this._onclose;
+        },
+        
+        _onopen: function(){
+          $('join').className='hidden';
+          $('joined').className='';
+          $('phrase').focus();
+          // room._send(room._username,'has joined!');
+        },
+        
+        _send: function(user,message){
+          user=user.replace(':','_');
+          if (this._ws)
+            this._ws.send(message);
+          
+          //this._ws.send(user+':'+message);
+        },
+      
+        chat: function(text) {
+          if (text != null && text.length>0 )
+              room._send(room._username,text);
+        },
+        
+        _onmessage: function(m) {
+          if (m.data){
+            var c=m.data.indexOf('#');
+            var content=m.data.substring(0,c).replace('<','&lt;').replace('>','&gt;');
+            var url=m.data.substring(c+1).replace('<','&lt;').replace('>','&gt;');
+            
+            var chat=$('chat');
+            var spanContent = document.createElement('span');
+            spanContent.className='from';
+            spanContent.innerHTML=content+':&nbsp;';
+            var imgProfile = document.createElement('img');
+            imgProfile.src=url
+            var lineBreak = document.createElement('br');
+            chat.appendChild(imgProfile);
+            chat.appendChild(spanContent);
+            chat.appendChild(lineBreak);
+            chat.scrollTop = chat.scrollHeight - chat.clientHeight;   
+            //container.insertBefore(newFreeformLabel, container.firstChild);
+          }
+        },
+        
+        _onclose: function(m) {
+          this._ws=null;
+          $('join').className='';
+          $('joined').className='hidden';
+          $('username').focus();
+          $('chat').innerHTML='';
+        }
+        
+      };
+      
+    </script>
+    <style type='text/css'>
+    div { 
+        border: 0px blue; 
+        width: 700px ;
+        height: 25px ;
+        margin-left: auto ;
+        margin-right: auto ;
+        font-family: verdana, arial, helvetica, sans-serif; 
+    }
+    div#chat { clear: both; width: 40em; height: 20ex; overflow: auto; padding: 4px; border: 1px black; }
+    div#input { font-size: 16px; clear: both; width: 40em; padding: 4px; background-color: #0000FF; border: 1px black; border-top: 100px; margin-top:2cm; }
+    input#phrase { width:30em; background-color: #FFFFFF; }
+    input#username { width:14em; background-color: #e0f0f0; }
+    div.hidden { display: none; }
+    span.from { font-size: 12px; }
+    span.alert { font-style: italic; }
+    </style>
 </head>
+<body onload="room.join($F('username'))">
 
-<body>
-	Home static page -
-	<a href="/ping">Ping Servlet</a>
+<div id='input'>
+  <div id='join' >
+    <span style='color: white;'>Search:&nbsp;</span><input id='username' type='text'/><input id='joinB' class='button' type='submit' name='join' value='Connect'/>
+  </div>
+  <div id='joined' class='hidden'>
+    <span style='color: white;'>Search:&nbsp;</span><input id='phrase' type='text'/>
+    <input id='sendB' class='hidden' type='submit' name='join' value='Submit'/>
+  </div>
+</div>
+
+<div id='chat'></div>
+
+<script type='text/javascript'>
+$('username').setAttribute('autocomplete','OFF');
+$('username').onkeyup = function(ev) { var keyc=getKeyCode(ev); if (keyc==13 || keyc==10) { room.join($F('username')); return false; } return true; } ;        
+$('joinB').onclick = function(event) { room.join($F('username')); return false; };
+$('phrase').setAttribute('autocomplete','OFF');
+$('phrase').onkeyup = function(ev) {   var keyc=getKeyCode(ev); if (keyc==13 || keyc==10) { room.chat($F('phrase')); $('phrase').value=''; return false; } return true; };
+$('sendB').onclick = function(event) { room.chat($F('phrase')); $('phrase').value=''; return false; };
+</script>
+
 </body>
+
 </html>
+        
+        
+        

@@ -10,7 +10,7 @@ import org.apache.lucene.store.FSDirectory;
  * @author saung
  *
  */
-public class LucenceUtil {
+public class LuceneUtil {
 	/**
 	 * 
 	 * @param dirPath

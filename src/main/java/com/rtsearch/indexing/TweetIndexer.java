@@ -4,6 +4,7 @@
 package com.rtsearch.indexing;
 
 import java.io.IOException;
+import java.net.URL;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -16,7 +17,7 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 
-import com.rtsearch.util.LucenceUtil;
+import com.rtsearch.util.LuceneUtil;
 
 /**
  * @author saung
@@ -39,7 +40,7 @@ public class TweetIndexer implements Indexer {
 	
 	private IndexWriter getIndexWriter(String dirPath) {
 		try {
-			return new IndexWriter(LucenceUtil.getIndexDir(dirPath), analyzer, recreateIndexIfExists, IndexWriter.MaxFieldLength.UNLIMITED);
+			return new IndexWriter(LuceneUtil.getIndexDir(dirPath), analyzer, recreateIndexIfExists, IndexWriter.MaxFieldLength.UNLIMITED);
 		} catch (CorruptIndexException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -57,9 +58,11 @@ public class TweetIndexer implements Indexer {
 	 * @see com.rtsearch.indexing.Indexer#createIndex(java.lang.String)
 	 */
 	@Override
-	public void createIndex(String content) {
+	public void createIndex(String content, URL profileImageUrl) {
 		final Document doc = new Document();
 		doc.add(new Field(FIELD_CONTENTS, content, Field.Store.YES, Field.Index.ANALYZED));
+		// TODO - store non-indexed fields to other persistent database.
+		doc.add(new Field("profile_image_url", profileImageUrl.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
 		try {
 			this.indexWriter.addDocument(doc);

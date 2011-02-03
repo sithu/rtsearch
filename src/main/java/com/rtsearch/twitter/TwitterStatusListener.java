@@ -53,7 +53,7 @@ public class TwitterStatusListener implements StatusListener {
 		System.out.println(status.getUser().getId() + " : " + 
 				(status.getUser().isGeoEnabled() ? status.getGeoLocation() : "NO_GEO") + " : " + status.getUser().getName() + " : " + status.getText());
 
-		this.indexer.createIndex(status.getText());
+		this.indexer.createIndex(status.getText(), status.getUser().getProfileImageURL());
 	}
 
 	/* (non-Javadoc)

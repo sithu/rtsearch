@@ -13,7 +13,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
-import com.rtsearch.util.LucenceUtil;
+import com.rtsearch.util.LuceneUtil;
 
 import junit.framework.TestCase;
 
@@ -24,7 +24,7 @@ import junit.framework.TestCase;
  */
 public class QueryParserTest extends TestCase {
 	public void testSearchTweet() throws Exception {
-		Directory dir = LucenceUtil.getIndexDir("/tmp/lucene");
+		Directory dir = LuceneUtil.getIndexDir("/tmp/lucene");
 		IndexSearcher searcher = new IndexSearcher(dir);
 		
 		QueryParser parser = new QueryParser(Version.LUCENE_30, "contents", new SimpleAnalyzer());

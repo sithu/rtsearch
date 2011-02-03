@@ -5,9 +5,17 @@
     <servlet-name>PingServlet</servlet-name>
     <servlet-class>com.rtsearch.ui.PingServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>MainWebSocketServlet</servlet-name>
+    <servlet-class>com.rtsearch.ui.MainWebSocketServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>PingServlet</servlet-name>
     <url-pattern>/ping/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>PingServlet</servlet-name>
+    <url-pattern>/search/*</url-pattern>
   </servlet-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
