@@ -34,7 +34,7 @@ public class BootStrap extends AbstractHandler {
 	public static void main(String[] args) throws Exception {
 		Server server = new Server(8080);
 		server.setHandler(new BootStrap());
-
+		
 		server.start();
 		server.join();
 	}
