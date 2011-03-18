@@ -24,6 +24,7 @@ public class TwitterStreamIndexer {
 	 */
 	public static void main(String[] args) throws TwitterException, IOException {
 		System.out.println("Starting Twitter Streaming...");
+		System.setProperty("wordnet.database.dir", "/usr/local/WordNet-3.0/dict/");
 		Indexer indexer = new TweetIndexer("/tmp/lucene");
 	    TwitterStream twitterStream = new TwitterStreamFactory(new TwitterStatusListener(indexer)).getInstance("rtsearcher", "msproject");
 	    // sample() method internally creates a thread which manipulates TwitterStream and calls these adequate listener methods continuously.

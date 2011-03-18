@@ -67,7 +67,7 @@ public class TweetIndexer implements Indexer {
 		try {
 			this.indexWriter.addDocument(doc);
 			this.indexWriter.commit();
-			System.out.println("===" + this.indexWriter.numDocs() + " indexes created ==");
+			// System.out.println("===" + this.indexWriter.numDocs() + " indexes created ==");
 		} catch (CorruptIndexException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
