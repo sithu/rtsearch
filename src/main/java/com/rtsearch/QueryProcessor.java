@@ -13,6 +13,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.Weight;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
@@ -54,6 +55,7 @@ public class QueryProcessor {
 	 */
 	public StringBuilder searchTweet(String keyword) throws Exception {
 		final Query query = parser.parse(keyword);
+		//final Weight weight = query.createWeight(searcher);
 		final TopDocs docs = searcher.search(query, 5);
 		
 		System.out.println("Total hits = " + docs.totalHits + ". ScoresDocs size = " + docs.scoreDocs.length);

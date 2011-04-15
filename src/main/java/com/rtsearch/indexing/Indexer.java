@@ -10,6 +10,6 @@ import java.net.URL;
  *
  */
 public interface Indexer {
-	public void createIndex(String content, URL profileImageUrl);
+	public void createIndex(String content, URL profileImageUrl, float weight);
 	public void closeIndex();
 }

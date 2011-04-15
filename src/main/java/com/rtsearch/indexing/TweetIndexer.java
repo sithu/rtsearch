@@ -58,12 +58,12 @@ public class TweetIndexer implements Indexer {
 	 * @see com.rtsearch.indexing.Indexer#createIndex(java.lang.String)
 	 */
 	@Override
-	public void createIndex(String content, URL profileImageUrl) {
+	public void createIndex(String content, URL profileImageUrl, float score) {
 		final Document doc = new Document();
 		doc.add(new Field(FIELD_CONTENTS, content, Field.Store.YES, Field.Index.ANALYZED));
 		// TODO - store non-indexed fields to other persistent database.
 		doc.add(new Field("profile_image_url", profileImageUrl.toString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		
+		doc.setBoost(score);
 		try {
 			this.indexWriter.addDocument(doc);
 			this.indexWriter.commit();

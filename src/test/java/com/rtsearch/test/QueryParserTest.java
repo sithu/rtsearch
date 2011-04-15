@@ -24,7 +24,8 @@ import junit.framework.TestCase;
  */
 public class QueryParserTest extends TestCase {
 	public void testSearchTweet() throws Exception {
-		Directory dir = LuceneUtil.getIndexDir("/tmp/lucene");
+		/*
+                Directory dir = LuceneUtil.getIndexDir("/tmp/lucene");
 		IndexSearcher searcher = new IndexSearcher(dir);
 		
 		QueryParser parser = new QueryParser(Version.LUCENE_30, "contents", new SimpleAnalyzer());
@@ -39,5 +40,6 @@ public class QueryParserTest extends TestCase {
 			d = searcher.doc(docs.scoreDocs[i].doc);
 			System.out.println("Found = " + d.get("contents"));
 		}
+	        */
 	}
 }

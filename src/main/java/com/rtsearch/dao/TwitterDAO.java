@@ -3,6 +3,8 @@
  */
 package com.rtsearch.dao;
 
+import java.util.Set;
+
 /**
  * @author saung
  *
@@ -13,6 +15,7 @@ public class TwitterDAO {
 	private static final String RECENT_SEARCH_KEYWORD_SET = "tweet:recent:search_keyword";
 	private static final String TWEET_SCORE_SET = "tweet:score:";
 	private static final String RECENT_TWEET_SET = "tweet:recent:";
+	private static final String POPULAR_SEARCH_KEYWORD_SET = "tweet:popular:search_keyword";
 	
 	/**
 	 * @param dataStore
@@ -36,6 +39,14 @@ public class TwitterDAO {
 	
 	public void addTweetScore(long tweetId, double score) {
 		dataStore.addSortedSet(String.valueOf(TWEET_SCORE_SET + tweetId), score, String.valueOf(tweetId));
+	}
+	
+	public Double incrementPopularSearchKeyword(String keyword) {
+		return dataStore.incrementSortedSet(POPULAR_SEARCH_KEYWORD_SET, 1, keyword);
+	}
+	
+	public Set<String> getPupularSearchKeywords(double min, double max, int limit) {
+		return dataStore.getSortedSetByScore(POPULAR_SEARCH_KEYWORD_SET, min, max, 0, limit);
 	}
 	
 }
