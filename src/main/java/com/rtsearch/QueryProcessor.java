@@ -4,6 +4,7 @@
 package com.rtsearch;
 
 import java.io.IOException;
+import java.util.Formatter;
 
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
@@ -13,7 +14,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.Weight;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
@@ -27,7 +27,7 @@ public class QueryProcessor {
 	private final IndexSearcher searcher;
 	private final QueryParser parser;
 	
-	
+	private static final String JSON = "{ \"screen-name\": \"%1s\", \"profile-img\": \"%2s\", \"tweet\": \"%3s\" }";
 	/**
 	 * 
 	 */
@@ -48,23 +48,22 @@ public class QueryProcessor {
 	}
 
 	/**
-	 * 
-	 * @param keyword
-	 * @return
-	 * @throws Exception
+	 * Search keyword through the indexer and return top five matching tweets.
+	 *   
+	 * @param keyword - a keyword to be searched.
+	 * @return top file results.
+	 * @throws Exception if any failure happened during the operation.
 	 */
 	public StringBuilder searchTweet(String keyword) throws Exception {
 		final Query query = parser.parse(keyword);
-		//final Weight weight = query.createWeight(searcher);
 		final TopDocs docs = searcher.search(query, 5);
-		
 		System.out.println("Total hits = " + docs.totalHits + ". ScoresDocs size = " + docs.scoreDocs.length);
-		
 		return parseResult(docs.scoreDocs);
 	}
 	
 	private final StringBuilder parseResult(ScoreDoc[] scoreDocs) {
 		final StringBuilder result = new StringBuilder();
+		final Formatter formatter = new Formatter(result);
 		
 		if(scoreDocs == null) {
 			result.append("NOT FOUND");
@@ -75,12 +74,14 @@ public class QueryProcessor {
 		try {
 			for(int i = 0; i < scoreDocs.length; i++) {
 				d = searcher.doc(scoreDocs[i].doc);
-				result.append(d.get("contents"));
-				result.append("#");
-				result.append(d.get("profile_image_url"));
+				formatter.format(JSON, "foo", d.get("profile_image_url"), d.get("contents"));
 				
-				System.out.println("Found = " + d.get("contents"));
+				System.out.println("Found = " + result.toString() + ". score=" + d.getBoost());
+				if((i+1) < scoreDocs.length) {
+					result.append("|");
+				}
 			}
+			//result.append("]");
 		} catch (CorruptIndexException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

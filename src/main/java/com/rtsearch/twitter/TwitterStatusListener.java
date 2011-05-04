@@ -28,6 +28,8 @@ import twitter4j.StatusListener;
  *
  */
 public class TwitterStatusListener implements StatusListener {
+	private static final String LOG_SEPARATOR = ",";
+	private static final String HTTP_HTTPS_REGEX = "(http|https)://.+";
 	/**
 	 * 
 	 */
@@ -69,20 +71,22 @@ public class TwitterStatusListener implements StatusListener {
 	public void onStatus(Status status) {
 		float score = calculateTweetScore(status.isFavorited(), status.isRetweet(), status.getUser().getFollowersCount(), status.getUser().getFriendsCount(), 0);
 		
-		//final StringBuilder sb = new StringBuilder();
-		/*
-		sb.append(status.getUser().getScreenName() + "||" + 
-				(status.getUser().isGeoEnabled() ? status.getGeoLocation() : "NO_GEO") + "||NAME=" + status.getUser().getName() + 
-				"||IS_FAV=" + status.isFavorited() + "||IS_RETWEET=" + status.isRetweet() +   
-				"||IS_STATUS_FAV=" + status.getUser().isStatusFavorited() + "||NUM_FOLLOWERS=" + status.getUser().getFollowersCount() + "||NUM_FRIENDS=" + status.getUser().getFriendsCount() + 
-			    "||LOC=" + status.getUser().getLocation() + "||SCORE=" + score);
-		*/
-        //System.out.println(sb.toString());
+		final StringBuilder sb = new StringBuilder();
+		
+		sb.append(status.getUser().getId() + LOG_SEPARATOR + 
+				(status.getUser().isGeoEnabled() ? "GEO" : "NO_GEO") +  
+				LOG_SEPARATOR + status.isFavorited() + LOG_SEPARATOR + status.isRetweet() +   
+				LOG_SEPARATOR + status.getUser().isStatusFavorited() + LOG_SEPARATOR + 
+				status.getUser().getFollowersCount() + LOG_SEPARATOR + status.getUser().getFriendsCount() + 
+				LOG_SEPARATOR + searchTermTokenizer(status.getText())  + 
+				LOG_SEPARATOR + urlTokenizer(status.getText()) + LOG_SEPARATOR + score);
+		
+        System.out.println(sb.toString() + status.getText());
         
 		this.indexer.createIndex(status.getText(), status.getUser().getProfileImageURL(), score);
 		
 		// userNameTokenizer(status.getText());
-		searchTermTokenizer(status.getText());
+		// searchTermTokenizer(status.getText());
 		// urlTokenizer(status.getText());
 		// isInDictionaryTokenizer(status.getText());
 		// dao.addRecentTwitterer(status.getUser().getScreenName());
@@ -120,52 +124,50 @@ public class TwitterStatusListener implements StatusListener {
 		}
 	}
 
-	private void searchTermTokenizer(String str) {
+	/**
+	 * Sanitize keywords and filter non-English keywords.
+	 * 
+	 * @param str - a raw search keyword from the tweet.
+	 */
+	private boolean searchTermTokenizer(String str) {
 		final Tokenizer tokenizer = this.searchTermTokenizerFactory.tokenizer(str.toCharArray(), 0, str.length());
 		final Iterator<String> it = tokenizer.iterator();
 		String keyword = null;
 		Synset[] synsets = null;
+		boolean isFound = false;
 		
 		while(it.hasNext()) {
 			keyword = it.next().substring(1);
 			synsets = database.getSynsets(keyword.toLowerCase());
 			if(synsets == null || synsets.length == 0) {
-				System.out.println("NOT_IN_DICT=" + keyword ); // + ":" + dao.incrementPopularSearchKeyword(keyword));
+				// System.out.println("NOT_IN_DICT=" + keyword ); // + ":" + dao.incrementPopularSearchKeyword(keyword));
 			} else { 
-				// System.out.println("SEARCH_TERM=" + keyword + ":" + dao.incrementPopularSearchKeyword(keyword));
 				for(Synset s : synsets) {
 					if(s.getType().equals(SynsetType.NOUN)) {
-						System.out.println("SEARCH_TERM=" + keyword + ":" + dao.incrementPopularSearchKeyword(keyword));
+						// System.out.println("SEARCH_TERM=" + keyword + ":" + dao.incrementPopularSearchKeyword(keyword));
+						dao.incrementPopularSearchKeyword(keyword);
 						break;
 					}
-					/*
-					if(s.getType().equals(SynsetType.ADJECTIVE)) {
-						System.out.println("ADJECTIVE");
-					} else if(s.getType().equals(SynsetType.ADVERB)) {
-						System.out.println("ADVERB");
-					} else if(s.getType().equals(SynsetType.NOUN)) {
-						System.out.println("NOUN");
-					} else if(s.getType().equals(SynsetType.VERB)) {
-						System.out.println("VERB");
-					} else if(s.getType().equals(SynsetType.ADJECTIVE_SATELLITE)) {
-						System.out.println("ADJECTIVE_SATELLITE");
-					} else {
-						System.out.println("UNKNOWN");
-					}
-					*/
 				}
 			}
+			isFound = true;
 		}
+		return isFound;
 	}
 	
-	private void urlTokenizer(String str) {
-		String regex = "(http|https)://.+";
-		TokenizerFactory tf = new RegExTokenizerFactory(regex);
-		Tokenizer tokenizer = tf.tokenizer(str.toCharArray(), 0, str.length());
-		Iterator<String> it = tokenizer.iterator();
-		while(it.hasNext()) {
-			System.out.println("URL>>>" + it.next());
+	/**
+	 * 
+	 * @param str
+	 * @return
+	 */
+	private boolean urlTokenizer(String str) {
+		final TokenizerFactory tf = new RegExTokenizerFactory(HTTP_HTTPS_REGEX);
+		final Tokenizer tokenizer = tf.tokenizer(str.toCharArray(), 0, str.length());
+		final Iterator<String> it = tokenizer.iterator();
+		if(it.hasNext()) {
+			return true;
 		}
+		return false;
 	}
 	
 	private void isInDictionaryTokenizer(String str) {

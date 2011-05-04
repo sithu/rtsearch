@@ -17,6 +17,7 @@ import twitter4j.TwitterStreamFactory;
  */
 public class TwitterStreamIndexer {
 	/**
+	 * Execute Twitter firehose streaming client.
 	 * 
 	 * @param args
 	 * @throws TwitterException

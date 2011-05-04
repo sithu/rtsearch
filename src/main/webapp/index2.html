@@ -3,7 +3,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>RT Search</title>
-<script type='text/javascript' src="http://json-sans-eval.googlecode.com/svn/trunk/src/json_sans_eval.js"></script>
 <script type='text/javascript'>
     
       if (!window.WebSocket)
@@ -14,10 +13,6 @@
       
       function getKeyCode(ev) { if (window.event) return window.event.keyCode; return ev.keyCode; } 
       
-      function stripIt(x){
-    	  x.value = x.value.replace(/['"]/g,'');
-    	  };
-    	  
       var room = {
         join: function(name) {
           this._username=name;
@@ -29,9 +24,8 @@
         },
         
         _onopen: function(){
-          $('join').className='hidden';
-          $('joined').className='';
-          $('phrase').focus();
+          $('client').className='hidden';
+          $('search-input').focus();
           // room._send(room._username,'has joined!');
         },
         
@@ -48,35 +42,24 @@
               room._send(room._username,text);
         },
         
-        
         _onmessage: function(m) {
           if (m.data){
-			
-        	var tweetArray = m.data;
-        	alert(tweetArray);
-        	tweetArray = tweetArray.split("|");
-        	alert(tweetArray);
-        	
-        	alert(tweetArray.length);
-        	alert(tweetArray[0]);
-        	alert(tweetArray[1]);
-        	
-        	for(var i = 0; i < tweetArray.length; i++) {
-        		var t = jsonParse(tweetArray[i]);
-				var chat=$('chat');
-	            var spanContent = document.createElement('span');
-	            spanContent.className='from';
-	            spanContent.innerHTML=t.tweet +':&nbsp;';
-	            var imgProfile = document.createElement('img');
-	            imgProfile.src = t["profile-img"]; 
-	            var lineBreak = document.createElement('br');
-	            chat.appendChild(imgProfile);
-	            chat.appendChild(spanContent);
-	            chat.appendChild(lineBreak);
-	            chat.scrollTop = chat.scrollHeight - chat.clientHeight;   
-	            //container.insertBefore(newFreeformLabel, container.firstChild);
-	          } // end for
-	          
+            var c=m.data.indexOf('#');
+            var content=m.data.substring(0,c).replace('<','&lt;').replace('>','&gt;');
+            var url=m.data.substring(c+1).replace('<','&lt;').replace('>','&gt;');
+            
+            var chat=$('chat');
+            var spanContent = document.createElement('span');
+            spanContent.className='from';
+            spanContent.innerHTML=content+':&nbsp;';
+            var imgProfile = document.createElement('img');
+            imgProfile.src=url
+            var lineBreak = document.createElement('br');
+            chat.appendChild(imgProfile);
+            chat.appendChild(spanContent);
+            chat.appendChild(lineBreak);
+            chat.scrollTop = chat.scrollHeight - chat.clientHeight;   
+            //container.insertBefore(newFreeformLabel, container.firstChild);
           }
         },
         
