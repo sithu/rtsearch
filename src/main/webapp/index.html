@@ -3,14 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>RT Search</title>
-<script type='text/javascript' src="http://json-sans-eval.googlecode.com/svn/trunk/src/json_sans_eval.js"></script>
+<script type='text/javascript' src="/static/json_sans_eval.js"></script>
+<script type='text/javascript' src='/static/jquery-1.6.min.js'></script>
 <script type='text/javascript'>
     
       if (!window.WebSocket)
         alert("WebSocket not supported by this browser");
     
-      function $() { return document.getElementById(arguments[0]); }
-      function $F() { return document.getElementById(arguments[0]).value; }
+      function s() { return document.getElementById(arguments[0]); }
+      function sF() { return document.getElementById(arguments[0]).value; }
       
       function getKeyCode(ev) { if (window.event) return window.event.keyCode; return ev.keyCode; } 
       
@@ -29,9 +30,9 @@
         },
         
         _onopen: function(){
-          $('join').className='hidden';
-          $('joined').className='';
-          $('phrase').focus();
+          s('join').className='hidden';
+          s('joined').className='';
+          s('phrase').focus();
           // room._send(room._username,'has joined!');
         },
         
@@ -53,17 +54,17 @@
           if (m.data){
 			
         	var tweetArray = m.data;
-        	alert(tweetArray);
+        	//alert(tweetArray);
         	tweetArray = tweetArray.split("|");
-        	alert(tweetArray);
+        	//alert(tweetArray);
         	
-        	alert(tweetArray.length);
-        	alert(tweetArray[0]);
-        	alert(tweetArray[1]);
+        	//alert(tweetArray.length);
+        	//alert(tweetArray[0]);
+        	//alert(tweetArray[1]);
         	
         	for(var i = 0; i < tweetArray.length; i++) {
         		var t = jsonParse(tweetArray[i]);
-				var chat=$('chat');
+				var chat=s('chat');
 	            var spanContent = document.createElement('span');
 	            spanContent.className='from';
 	            spanContent.innerHTML=t.tweet +':&nbsp;';
@@ -82,10 +83,10 @@
         
         _onclose: function(m) {
           this._ws=null;
-          $('join').className='';
-          $('joined').className='hidden';
-          $('username').focus();
-          $('chat').innerHTML='';
+          s('join').className='';
+          s('joined').className='hidden';
+          s('username').focus();
+          s('chat').innerHTML='';
         }
         
       };
@@ -109,7 +110,7 @@
     span.alert { font-style: italic; }
     </style>
 </head>
-<body onload="room.join($F('username'))">
+<body onload="room.join(sF('username'))">
 
 <div id='input'>
   <div id='join' >
@@ -128,12 +129,12 @@
     <div id="mydiv"></div>
         
 <script type='text/javascript'>
-$('username').setAttribute('autocomplete','OFF');
-$('username').onkeyup = function(ev) { var keyc=getKeyCode(ev); if (keyc==13 || keyc==10) { room.join($F('username')); return false; } return true; } ;        
-$('joinB').onclick = function(event) { room.join($F('username')); return false; };
-$('phrase').setAttribute('autocomplete','OFF');
-$('phrase').onkeyup = function(ev) {   var keyc=getKeyCode(ev); if (keyc==13 || keyc==10) { room.chat($F('phrase')); $('phrase').value=''; return false; } return true; };
-$('sendB').onclick = function(event) { room.chat($F('phrase')); $('phrase').value=''; return false; };
+s('username').setAttribute('autocomplete','OFF');
+s('username').onkeyup = function(ev) { var keyc=getKeyCode(ev); if (keyc==13 || keyc==10) { room.join(sF('username')); return false; } return true; } ;        
+s('joinB').onclick = function(event) { room.join(sF('username')); return false; };
+s('phrase').setAttribute('autocomplete','OFF');
+s('phrase').onkeyup = function(ev) {   var keyc=getKeyCode(ev); if (keyc==13 || keyc==10) { room.chat(sF('phrase')); s('phrase').value=''; return false; } return true; };
+s('sendB').onclick = function(event) { room.chat(sF('phrase')); s('phrase').value=''; return false; };
 </script>
 
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
@@ -143,30 +144,31 @@ $('sendB').onclick = function(event) { room.chat($F('phrase')); $('phrase').valu
       google.load("visualization", "1");
 
       // Set callback to run when API is loaded
-      google.setOnLoadCallback(drawVisualization);
+      google.setOnLoadCallback(loadData);
+      
+      function loadData() {
+    	 var jqxhr = $.getJSON("/cloud", function(result) {
+  		 	drawVisualization(result);
+    	 })
+         .error(function() { alert("error"); });
+      };
 
       // Called when the Visualization API is loaded.
-      function drawVisualization() {
+      function drawVisualization(result) {
 
         // Create and populate a data table.
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Tag');
         data.addColumn('string', 'URL');
-        data.addRows(7);
-        data.setCell(0, 0, 'iPhone');
-        data.setCell(0, 1, 'http://twitter.com/#!/search?q=%23' + 'iPhone');
-        data.setCell(1, 0, 'newtwitter');
-        data.setCell(1, 1, 'http://twitter.com/#!/search?q=%23' + 'newtwitter');
-        data.setCell(2, 0, 'news');
-        data.setCell(2, 1, 'http://twitter.com/#!/search?q=%23' + 'news');
-        data.setCell(3, 0, 'weekends');
-        data.setCell(3, 1, 'http://twitter.com/#!/search?q=%23' + 'weekends');
-        data.setCell(4, 0, 'Love');
-        data.setCell(4, 1, 'http://twitter.com/#!/search?q=%23' + 'Love');
-        data.setCell(5, 0, 'Japan');
-        data.setCell(5, 1, 'http://twitter.com/#!/search?q=%23' + 'Japan');
-        data.setCell(6, 0, 'Dating');
-        data.setCell(6, 1, 'http://twitter.com/#!/search?q=%23' + 'Dating');
+        
+        data.addRows(result.length);
+	      	
+		for(var i = 0; i < result.length; i++) {
+           	data.setCell(i, 0, result[i]);
+           	var url = 'http://twitter.com/#!/search?q=%23' + result[i]; 
+           	data.setCell(i, 1, encodeURIComponent(url));
+       	}
+       
         // Instantiate our table object.
         var vis = new gviz_word_cumulus.WordCumulus(document.getElementById('mydiv'));
 

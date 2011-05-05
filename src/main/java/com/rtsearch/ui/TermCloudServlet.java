@@ -48,7 +48,7 @@ public class TermCloudServlet extends HttpServlet {
 		StringBuilder result = new StringBuilder();
 		int count = 1;
 		for(String keyword: this.dao.getPupularSearchKeywords(3, 500, LIMIT)) {
-			result.append(String.valueOf("{" + keyword + "}"));
+			result.append(String.valueOf("\"" + keyword + "\""));
 			if(count < LIMIT) {
 				result.append(",");
 				count++;
