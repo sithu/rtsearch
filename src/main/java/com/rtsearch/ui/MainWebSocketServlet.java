@@ -1,6 +1,8 @@
 package com.rtsearch.ui;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,10 @@ public class MainWebSocketServlet extends WebSocketServlet {
 	private static final long serialVersionUID = 1L;
     
 	private static final com.rtsearch.QueryProcessor queryProcessor = new com.rtsearch.QueryProcessor();
+	
+	public static final ConcurrentHashMap<String, SearchWebSocket> map = new ConcurrentHashMap<String, SearchWebSocket>();
+	
+	public static final ConcurrentHashMap<String, String> keywardCache = new ConcurrentHashMap<String, String>();
 	
     /**
      * @see WebSocketServlet#WebSocketServlet()
@@ -41,9 +47,10 @@ public class MainWebSocketServlet extends WebSocketServlet {
 	}
 
 	@Override
-	protected WebSocket doWebSocketConnect(HttpServletRequest arg0, String arg1) {
-		System.out.println("Attempting WebSocket connection...");
-		return new SearchWebSocket(this.queryProcessor);
+	protected WebSocket doWebSocketConnect(HttpServletRequest request, String arg1) {
+		System.out.println("Attempting WebSocket connection..." + request.getSession().getId());
+		SearchWebSocket socket = new SearchWebSocket(this.queryProcessor, request.getSession().getId());
+		return socket;
 	}
 
 }

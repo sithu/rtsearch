@@ -13,13 +13,15 @@ import com.rtsearch.QueryProcessor;
 public class SearchWebSocket implements WebSocket {
 	private final QueryProcessor queryProcessor;
 	private Outbound outbound;
+	private final String sessionId;
 	
 	/**
 	 * 
 	 * @param queryProcessor
 	 */
-	public SearchWebSocket(QueryProcessor queryProcessor) {
+	public SearchWebSocket(QueryProcessor queryProcessor, String sessionId) {
 		this.queryProcessor = queryProcessor;
+		this.sessionId = sessionId;
 	}
 	
 	/* (non-Javadoc)
@@ -37,7 +39,8 @@ public class SearchWebSocket implements WebSocket {
 	@Override
 	public void onDisconnect() {
 		System.out.println("got disconnected!");
-
+		MainWebSocketServlet.map.remove(this.sessionId);
+		MainWebSocketServlet.keywardCache.remove(this.sessionId);
 	}
 
 	/* (non-Javadoc)
@@ -58,6 +61,7 @@ public class SearchWebSocket implements WebSocket {
 		try {
 			System.out.println("::onMessage::keyword=" + data);
 			this.outbound.sendMessage(frame, this.queryProcessor.searchTweet(data).toString());
+			MainWebSocketServlet.keywardCache.put(this.sessionId, data);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -77,5 +81,12 @@ public class SearchWebSocket implements WebSocket {
 
 	}
 	
+	public void sendMessageRealTime(String data) {
+		try {
+			this.outbound.sendMessage(data);
+		} catch (IOException e) {
+			System.err.println("Failed to send real-time result");
+		}
+	}
 	
 }

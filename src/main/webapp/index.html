@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="main.css">
 <title>RT Search</title>
 <script type='text/javascript' src="/static/json_sans_eval.js"></script>
 <script type='text/javascript' src='/static/jquery-1.6.min.js'></script>
@@ -92,42 +93,38 @@
       };
       
     </script>
-    <style type='text/css'>
-    div { 
-        border: 0px blue; 
-        width: 700px ;
-        height: 25px ;
-        margin-left: auto ;
-        margin-right: auto ;
-        font-family: verdana, arial, helvetica, sans-serif; 
-    }
-    div#chat { clear: both; width: 40em; height: 20ex; overflow: auto; padding: 4px; border: 1px black; }
-    div#input { font-size: 16px; clear: both; width: 40em; padding: 4px; background-color: #0000FF; border: 1px black; border-top: 100px; margin-top:2cm; }
-    input#phrase { width:30em; background-color: #FFFFFF; }
-    input#username { width:14em; background-color: #e0f0f0; }
-    div.hidden { display: none; }
-    span.from { font-size: 12px; }
-    span.alert { font-style: italic; }
-    </style>
 </head>
 <body onload="room.join(sF('username'))">
 
-<div id='input'>
-  <div id='join' >
-    <span style='color: white;'>Search:&nbsp;</span><input id='username' type='text'/><input id='joinB' class='button' type='submit' name='join' value='Connect'/>
-  </div>
-  <div id='joined' class='hidden'>
-    <span style='color: white;'>Search:&nbsp;</span><input id='phrase' type='text'/>
-    <input id='sendB' class='hidden' type='submit' name='join' value='Submit'/>
-  </div>
+<div id="logo">
+   <table width="100%" height="100%" align="center" valign="center">
+	    <tr><td>
+    	  <img src="logo.png" alt="foo" />
+		</td></tr>
+   </table>
 </div>
 
-<div id='chat'></div>
+<div id="search">
+	<div id='input'>
+	  <div id='join' >
+	    <span style='color: white;'>Search:&nbsp;</span><input id='username' type='text'/><input id='joinB' class='button' type='submit' name='join' value='Connect'/>
+	  </div>
+	  <div id='joined' class='hidden'>
+	    <span style='color: white;'>Search:&nbsp;</span><input id='phrase' type='text'/>
+	    <input id='sendB' class='hidden' type='submit' name='join' value='Submit'/>
+	  </div>
+	</div>
+	
+	<div id='chat'></div>
+</div>
+  
+<div id="side">
+	<big style="font-family: verdana, arial, helvetica, sans-serif">Popular Terms Cloud</big>
+	<div id="mydiv">Cloud</div>
+</div> 
 
-	<big>Popular Search Terms</big>
-	<div></div>
-    <div id="mydiv"></div>
-        
+</body>
+
 <script type='text/javascript'>
 s('username').setAttribute('autocomplete','OFF');
 s('username').onkeyup = function(ev) { var keyc=getKeyCode(ev); if (keyc==13 || keyc==10) { room.join(sF('username')); return false; } return true; } ;        
@@ -173,11 +170,9 @@ s('sendB').onclick = function(event) { room.chat(sF('phrase')); s('phrase').valu
         var vis = new gviz_word_cumulus.WordCumulus(document.getElementById('mydiv'));
 
         // Draw our table with the data we created locally.
-        vis.draw(data, {text_color: '#00ff00', speed: 50, width:600, height:600});
+        vis.draw(data, {text_color: '#6698FF', speed: 50, width:400, height:500});
        }
    </script>
-   
-</body>
 
 </html>
         

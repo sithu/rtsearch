@@ -73,15 +73,20 @@ public class TwitterStatusListener implements StatusListener {
 		
 		final StringBuilder sb = new StringBuilder();
 		
-		sb.append(status.getUser().getId() + LOG_SEPARATOR + 
-				(status.getUser().isGeoEnabled() ? "GEO" : "NO_GEO") +  
-				LOG_SEPARATOR + status.isFavorited() + LOG_SEPARATOR + status.isRetweet() +   
-				LOG_SEPARATOR + status.getUser().isStatusFavorited() + LOG_SEPARATOR + 
-				status.getUser().getFollowersCount() + LOG_SEPARATOR + status.getUser().getFriendsCount() + 
-				LOG_SEPARATOR + searchTermTokenizer(status.getText())  + 
-				LOG_SEPARATOR + urlTokenizer(status.getText()) + LOG_SEPARATOR + score);
+		sb.append(status.getUser().getId()).append(LOG_SEPARATOR)
+			.append(status.getUser().getScreenName()).append(LOG_SEPARATOR)
+			.append(status.getUser().isGeoEnabled() ? "GEO" : "NO_GEO").append(LOG_SEPARATOR)  
+			.append(status.isFavorited()).append(LOG_SEPARATOR)
+			.append(status.isRetweet()).append(LOG_SEPARATOR)   
+			.append(status.getUser().isStatusFavorited()).append(LOG_SEPARATOR) 
+			.append(status.getUser().getFollowersCount()).append(LOG_SEPARATOR)
+			.append(status.getUser().getFriendsCount()).append(LOG_SEPARATOR)
+			.append(searchTermTokenizer(status.getText())).append(LOG_SEPARATOR) 
+			.append(urlTokenizer(status.getText())).append(LOG_SEPARATOR)
+			.append(score).append(LOG_SEPARATOR)
+			.append(status.getText());
 		
-        System.out.println(sb.toString() + status.getText());
+        System.out.println(sb.toString());
         
 		this.indexer.createIndex(status.getText(), status.getUser().getProfileImageURL(), score);
 		

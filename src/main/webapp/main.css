@@ -1,0 +1,78 @@
+@CHARSET "UTF-8";
+body
+{
+	border:0; margin:0; padding:0;
+}
+#logo {
+	width:950px;
+	height: 90px;
+	margin:0 auto;
+}
+/* LOGO 
+#logo {
+	height:90px;
+}
+*/
+/* Nav Bar */
+#search {
+	height:500px;
+	border: 0px blue; 
+    width: 650px ;
+    float: left;
+    margin-left: 200px;
+    margin-right: auto ;
+    font-family: verdana, arial, helvetica, sans-serif; 
+}
+#side {
+	margin-top: 0px;
+	margin-left: 0px;
+	width: 350px;
+	height: 500px;
+	float: right;
+	margin-right: 150px;
+}
+
+#chat { 
+	clear: both; 
+	width: 710px; height: 500px; 
+	overflow: auto; padding: 4px; border: 1px black; 
+}
+
+div#input { 
+	font-size: 20px; clear: both;
+	padding: 4px; 
+	background-color: #00799E; 
+	border: 1px black; 
+	border-top: 100px; 
+	margin-top:2cm; 
+}
+input#phrase {
+	width:400px; 
+	font-size: 20px;
+	background-color: #FFFFFF; 
+}
+input#username { 
+	width:400px; 
+	font-size: 20px;
+	background-color: #BDEDFF; 
+}
+div.hidden { 
+	display: none; 
+	width: 600px;
+	font-size: 20px;
+	padding-bottom: 25px;
+}
+
+div#join {
+	width:600px; 
+}
+.button {
+	font-size: 20px;
+	margin-left: 20x;	
+}
+big {
+	color: #A0CFEC;	
+	font-family: verdana, arial, helvetica, sans-serif;
+}
+span.from { font-size: 12px; }
+span.alert { font-style: italic; }

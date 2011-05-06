@@ -27,7 +27,7 @@ public class QueryProcessor {
 	private final IndexSearcher searcher;
 	private final QueryParser parser;
 	
-	private static final String JSON = "{ \"screen-name\": \"%1s\", \"profile-img\": \"%2s\", \"tweet\": \"%3s\" }";
+	public static final String JSON = "{ \"screen-name\": \"%1s\", \"profile-img\": \"%2s\", \"tweet\": \"%3s\" }";
 	/**
 	 * 
 	 */

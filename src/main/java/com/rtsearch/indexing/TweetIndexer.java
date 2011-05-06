@@ -5,6 +5,7 @@ package com.rtsearch.indexing;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Formatter;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -17,6 +18,9 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 
+import com.rtsearch.QueryProcessor;
+import com.rtsearch.ui.MainWebSocketServlet;
+import com.rtsearch.ui.SearchWebSocket;
 import com.rtsearch.util.LuceneUtil;
 
 /**
@@ -75,7 +79,15 @@ public class TweetIndexer implements Indexer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		/*
+		for(String key : MainWebSocketServlet.keywardCache.keySet()) {
+			String kw = MainWebSocketServlet.keywardCache.get(key);
+			if(content.contains(kw)) {
+				final SearchWebSocket socket = MainWebSocketServlet.map.get(key);
+				socket.sendMessageRealTime(createRealTimeResult(profileImageUrl.toString(), content));
+			}
+		}
+		*/
 	}
 
 	public void closeIndex() {
@@ -89,5 +101,12 @@ public class TweetIndexer implements Indexer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private String createRealTimeResult(String imgUrl, String tweet) {
+		final StringBuilder result = new StringBuilder();
+		final Formatter formatter = new Formatter(result);
+		formatter.format(QueryProcessor.JSON, "foo", imgUrl, tweet);
+		return result.toString();
 	}
 }
